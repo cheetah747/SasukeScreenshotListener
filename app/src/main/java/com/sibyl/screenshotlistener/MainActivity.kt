@@ -28,13 +28,13 @@ class MainActivity : AppCompatActivity() {
 
     override fun onPause() {
         super.onPause()
-//        manager?.stopListen()
+        manager?.stopListen()
         Log.i("SasukeLog","onPause()")
     }
 
     override fun onResume() {
         super.onResume()
-//        manager?.startListen()
+        manager?.startListen()
         Log.i("SasukeLog","onResume()")
     }
 }
