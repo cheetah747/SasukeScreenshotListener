@@ -1,5 +1,7 @@
 package com.sibyl.screenshotlistener
 
+import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import android.widget.Toast
@@ -9,6 +11,7 @@ import org.jetbrains.anko.doAsync
 import org.jetbrains.anko.uiThread
 import java.io.File
 
+
 class MainActivity : AppCompatActivity() {
     var manager: ScreenShotListenManager? = null
 
@@ -17,7 +20,7 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
         Toast.makeText(this, "onCreate", Toast.LENGTH_LONG).show()
 
-        manager = ScreenShotListenManager.newInstance(this@MainActivity).apply {
+        manager = ScreenShotListenManager.newInstance(applicationContext).apply {
             setListener(object : ScreenShotListenManager.OnScreenShotListener {
                 override fun onShot(imagePath: String?) {
 
@@ -30,6 +33,15 @@ class MainActivity : AppCompatActivity() {
                                     uiThread {
                                         Picasso.with(this@MainActivity).load(File(imagePath)).into(img)
 //                                        img.setImageBitmap(bottomCard)
+                                        img.setOnClickListener {
+                                            val shareIntent = Intent().apply {
+                                                action = Intent.ACTION_SEND
+                                                type = "image/*"
+                                                putExtra(Intent.EXTRA_STREAM, Uri.fromFile(File(imagePath)))
+                                            }
+                                            //创建分享的Dialog
+                                            application.startActivity(Intent.createChooser(shareIntent, "转发到"))
+                                        }
                                     }
                                 }
                             }
@@ -41,6 +53,7 @@ class MainActivity : AppCompatActivity() {
         }
         manager?.startListen()
 //        img.setImageResource(R.mipmap.feedback_card)
+
 
     }
 
