@@ -2,14 +2,13 @@ package com.sibyl.screenshotlistener
 
 import android.content.Context
 import android.graphics.*
-import android.util.Log
 
 
 /**
  * @author Sasuke on 2018/8/11.
  */
 class FeedbackCardMaker(context: Context) {
-    val TEXT_PAINT_SIZE = 70.0f
+    val TEXT_PAINT_SIZE = 65.0f
     val bottomCard by lazy {
         BitmapFactory.decodeResource(context.resources, R.mipmap.feedback_card)
     }
@@ -35,13 +34,12 @@ class FeedbackCardMaker(context: Context) {
             color = Color.WHITE
         }
 
-        val heightUnit = newBitmap.height / (infos.size + 1).toFloat()//每行字的高度
-        var startLine = heightUnit//绘制文字的起始水平线高度
-
+        val heightUnit = newBitmap.height / infos.size.toFloat()//每行字的高度
+//        var startLine = ((heightUnit -TEXT_PAINT_SIZE)/2) + TEXT_PAINT_SIZE //绘制文字的起始水平线高度
+        var startLine = ((bottomCard.height - infos.size * TEXT_PAINT_SIZE *1.5) / 2 + TEXT_PAINT_SIZE).toFloat()
         infos.forEach {
-            canvas.drawText(it, newBitmap.width / 3.toFloat() , startLine, textPaint)
-            startLine += heightUnit
-            Log.i("SasukeLog",heightUnit.toString())
+            canvas.drawText(it, newBitmap.width / 4.toFloat() , startLine, textPaint)
+            startLine += TEXT_PAINT_SIZE * 1.5f
         }
         canvas.save()
         canvas.restore();
