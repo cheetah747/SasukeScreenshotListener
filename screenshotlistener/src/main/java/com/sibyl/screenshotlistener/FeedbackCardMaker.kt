@@ -18,7 +18,7 @@ class FeedbackCardMaker(val context: Context) {
      * 把需要显示的信息画到底部卡片上
      */
     fun drawInfo2BottomCard(vararg infos: String): Bitmap {
-        val bottomCard = readBitmapRes(context,R.mipmap.feedback_card)
+        val bottomCard = readBitmapRes(context,R.drawable.feedback_card)
         val newBitmap = Bitmap.createBitmap(bottomCard.width, bottomCard.height, Bitmap.Config.RGB_565)
         val canvas = Canvas(newBitmap)
         val bitmapPaint = Paint().apply {

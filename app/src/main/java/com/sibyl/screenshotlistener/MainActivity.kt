@@ -1,10 +1,11 @@
-package com.sibyl.screenshotlistener
+package com.sibyl.sasukescreenshotlistener
 
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import android.widget.Toast
+import com.sibyl.screenshotlistener.FeedbackCardMaker
 import com.squareup.picasso.Picasso
 import kotlinx.android.synthetic.main.activity_main.*
 import org.jetbrains.anko.doAsync
@@ -13,15 +14,15 @@ import java.io.File
 
 
 class MainActivity : AppCompatActivity() {
-    var manager: ScreenShotListenManager? = null
+    var manager: com.sibyl.screenshotlistener.ScreenShotListenManager? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         Toast.makeText(this, "onCreate", Toast.LENGTH_LONG).show()
 
-        manager = ScreenShotListenManager.newInstance(applicationContext).apply {
-            setListener(object : ScreenShotListenManager.OnScreenShotListener {
+        manager = com.sibyl.screenshotlistener.ScreenShotListenManager.newInstance(applicationContext).apply {
+            setListener(object : com.sibyl.screenshotlistener.ScreenShotListenManager.OnScreenShotListener {
                 override fun onShot(imagePath: String?) {
 
                     Toast.makeText(this@MainActivity, "screenshot get:$imagePath", Toast.LENGTH_LONG).show()
