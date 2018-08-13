@@ -27,6 +27,7 @@ class MainActivity : AppCompatActivity() {
 
                     Toast.makeText(this@MainActivity, "screenshot get:$imagePath", Toast.LENGTH_LONG).show()
                     doAsync {
+                        Thread.sleep(1000)//有些垃圾系统截图时写入磁盘比较慢，所以这边要等一下。
                         FeedbackCardMaker(this@MainActivity).apply {
                             val bottomCard = drawInfo2BottomCard("版本：v4.6.0.1", "门店：0110074 工号：690", "设备：Android 8.0.1 Oneplus3t")
                             imagePath?.let {

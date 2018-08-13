@@ -60,10 +60,11 @@ class FeedbackCardMaker(val context: Context) {
             }
             BitmapFactory.decodeFile(scrShotPath,opt)
             //前面都是铺垫，这个才是目的
-            this.inSampleSize = opt.outWidth / bottomCard.width
+            this.inJustDecodeBounds = false
+            this.inSampleSize = if (opt.outWidth / bottomCard.width >= 1) opt.outWidth / bottomCard.width else  1
         })
 
-        val shotWidth = shotBmp.getWidth()
+//        val shotWidth = shotBmp.getWidth()
 //        if (bottomCard.getWidth() !== shotWidth) {
 //            //以第二张图片的宽度为标准，对第一张图片进行缩放。
 //            val shotHeight = bottomCard.getHeight() * shotWidth / bottomCard.getWidth()
@@ -73,11 +74,21 @@ class FeedbackCardMaker(val context: Context) {
 //            canvas.drawBitmap(shotBmp,0.toFloat(),0.toFloat(),null)
 //            canvas.drawBitmap(newSizeBmp2, 0.toFloat(), shotBmp.height.toFloat(), null)
 //        } else {
-            //两张图片宽度相等，则直接拼接。
-            resultBmp = Bitmap.createBitmap(bottomCard.width, shotBmp.height + bottomCard.height, Bitmap.Config.RGB_565)
-            val canvas = Canvas(resultBmp)
-            canvas.drawBitmap(shotBmp,0.toFloat(),0.toFloat(),null)
-            canvas.drawBitmap(bottomCard, 0.toFloat(), shotBmp.height.toFloat(), null)
+            //如果截图宽 小于 底卡宽，那就缩小底卡
+            if(shotBmp.width < bottomCard.width){
+                var newbottomCard = resizeBitmap(bottomCard,shotBmp.width, bottomCard.height *shotBmp.width / bottomCard.width)
+                resultBmp = Bitmap.createBitmap(newbottomCard.width, shotBmp.height + newbottomCard.height, Bitmap.Config.RGB_565)
+                val canvas = Canvas(resultBmp)
+                canvas.drawBitmap(shotBmp,0.toFloat(),0.toFloat(),null)
+                canvas.drawBitmap(newbottomCard, 0.toFloat(), shotBmp.height.toFloat(), null)
+            }else{
+                //两张图片宽度相等，则直接拼接。
+                resultBmp = Bitmap.createBitmap(bottomCard.width, shotBmp.height + bottomCard.height, Bitmap.Config.RGB_565)
+                val canvas = Canvas(resultBmp)
+                canvas.drawBitmap(shotBmp,0.toFloat(),0.toFloat(),null)
+                canvas.drawBitmap(bottomCard, 0.toFloat(), shotBmp.height.toFloat(), null)
+            }
+
 //        }
 
         return saveBmp2File(resultBmp,File(scrShotPath),Bitmap.CompressFormat.JPEG)
