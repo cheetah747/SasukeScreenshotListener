@@ -77,7 +77,7 @@ class FeedbackCardMaker(val context: Context) {
             //如果截图宽 小于 底卡宽，那就缩小底卡
             if(shotBmp.width < bottomCard.width){
                 var newbottomCard = resizeBitmap(bottomCard,shotBmp.width, bottomCard.height *shotBmp.width / bottomCard.width)
-                resultBmp = Bitmap.createBitmap(newbottomCard.width, shotBmp.height + newbottomCard.height, Bitmap.Config.ARGB_8888)
+                resultBmp = Bitmap.createBitmap(newbottomCard.width, shotBmp.height + newbottomCard.height, Bitmap.Config.RGB_565)
                 val canvas = Canvas(resultBmp)
                 canvas.drawBitmap(shotBmp,0.toFloat(),0.toFloat(),null)
                 canvas.drawBitmap(newbottomCard, 0.toFloat(), shotBmp.height.toFloat(), null)
