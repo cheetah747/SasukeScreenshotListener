@@ -62,6 +62,7 @@ class FeedbackCardMaker(val context: Context) {
             //前面都是铺垫，这个才是目的
             this.inJustDecodeBounds = false
             this.inSampleSize = if (opt.outWidth / bottomCard.width >= 1) opt.outWidth / bottomCard.width else  1
+            inPreferredConfig = Bitmap.Config.RGB_565
         })
 
 //        val shotWidth = shotBmp.getWidth()
