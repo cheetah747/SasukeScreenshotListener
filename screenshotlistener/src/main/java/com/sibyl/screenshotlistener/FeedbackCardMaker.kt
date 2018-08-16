@@ -18,7 +18,7 @@ class FeedbackCardMaker(val context: Context) {
      * 把需要显示的信息画到底部卡片上
      */
     fun drawInfo2BottomCard(vararg infos: String): Bitmap {
-        val bottomCard = readBitmapRes(context,R.drawable.feedback_card)
+        val bottomCard = readBitmapRes(context, R.drawable.feedback_card)
         val newBitmap = Bitmap.createBitmap(bottomCard.width, bottomCard.height, Bitmap.Config.RGB_565)
         val canvas = Canvas(newBitmap)
         val bitmapPaint = Paint().apply {
@@ -38,9 +38,9 @@ class FeedbackCardMaker(val context: Context) {
 
         val heightUnit = newBitmap.height / infos.size.toFloat()//每行字的高度
 //        var startLine = ((heightUnit -TEXT_PAINT_SIZE)/2) + TEXT_PAINT_SIZE //绘制文字的起始水平线高度
-        var startLine = ((bottomCard.height - infos.size * TEXT_PAINT_SIZE *1.5) / 2 + TEXT_PAINT_SIZE).toFloat()
+        var startLine = ((bottomCard.height - infos.size * TEXT_PAINT_SIZE * 1.5) / 2 + TEXT_PAINT_SIZE).toFloat()
         infos.forEach {
-            canvas.drawText(it, newBitmap.width / 4.toFloat() , startLine, textPaint)
+            canvas.drawText(it, newBitmap.width / 4.toFloat(), startLine, textPaint)
             startLine += TEXT_PAINT_SIZE * 1.5f
         }
         canvas.save()
@@ -52,16 +52,16 @@ class FeedbackCardMaker(val context: Context) {
     /**
      * 把截图与底部信息卡拼接起来
      */
-    fun mergeScrShot2BottomCard(scrShotPath: String, bottomCard: Bitmap): Boolean{
-        var resultBmp: Bitmap
-        val shotBmp = BitmapFactory.decodeFile(scrShotPath,BitmapFactory.Options().apply {
+    fun mergeScrShot2BottomCard(scrShotPath: String, bottomCard: Bitmap): Boolean {
+        var resultBmp: Bitmap?
+        var shotBmp = BitmapFactory.decodeFile(scrShotPath, BitmapFactory.Options().apply {
             val opt = BitmapFactory.Options().apply {
                 inJustDecodeBounds = true
             }
-            BitmapFactory.decodeFile(scrShotPath,opt)
+            BitmapFactory.decodeFile(scrShotPath, opt)
             //前面都是铺垫，这个才是目的
             this.inJustDecodeBounds = false
-            this.inSampleSize = if (opt.outWidth / bottomCard.width >= 1) opt.outWidth / bottomCard.width else  1
+            this.inSampleSize = if (opt.outWidth / bottomCard.width >= 1) opt.outWidth / bottomCard.width else 1
             inPreferredConfig = Bitmap.Config.RGB_565
         })
 
@@ -75,24 +75,29 @@ class FeedbackCardMaker(val context: Context) {
 //            canvas.drawBitmap(shotBmp,0.toFloat(),0.toFloat(),null)
 //            canvas.drawBitmap(newSizeBmp2, 0.toFloat(), shotBmp.height.toFloat(), null)
 //        } else {
-            //如果截图宽 小于 底卡宽，那就缩小底卡
-            if(shotBmp.width < bottomCard.width){
-                var newbottomCard = resizeBitmap(bottomCard,shotBmp.width, bottomCard.height *shotBmp.width / bottomCard.width)
-                resultBmp = Bitmap.createBitmap(newbottomCard.width, shotBmp.height + newbottomCard.height, Bitmap.Config.RGB_565)
-                val canvas = Canvas(resultBmp)
-                canvas.drawBitmap(shotBmp,0.toFloat(),0.toFloat(),null)
-                canvas.drawBitmap(newbottomCard, 0.toFloat(), shotBmp.height.toFloat(), null)
-            }else{
-                //两张图片宽度相等，则直接拼接。
-                resultBmp = Bitmap.createBitmap(bottomCard.width, shotBmp.height + bottomCard.height, Bitmap.Config.RGB_565)
-                val canvas = Canvas(resultBmp)
-                canvas.drawBitmap(shotBmp,0.toFloat(),0.toFloat(),null)
-                canvas.drawBitmap(bottomCard, 0.toFloat(), shotBmp.height.toFloat(), null)
-            }
+        //以防万一，有时候会为空
+        shotBmp.takeIf { it == null }?.run { return false }
+        //如果截图宽 小于 底卡宽，那就缩小底卡
+        if (shotBmp.width < bottomCard.width) {
+            var newbottomCard = resizeBitmap(bottomCard, shotBmp.width, bottomCard.height * shotBmp.width / bottomCard.width)
+            resultBmp = Bitmap.createBitmap(newbottomCard.width, shotBmp.height + newbottomCard.height, Bitmap.Config.RGB_565)
+            val canvas = Canvas(resultBmp)
+            canvas.drawBitmap(shotBmp, 0.toFloat(), 0.toFloat(), null)
+            canvas.drawBitmap(newbottomCard, 0.toFloat(), shotBmp.height.toFloat(), null)
+        } else {
+            //两张图片宽度相等，则直接拼接。
+            resultBmp = Bitmap.createBitmap(bottomCard.width, shotBmp.height + bottomCard.height, Bitmap.Config.RGB_565)
+            val canvas = Canvas(resultBmp)
+            canvas.drawBitmap(shotBmp, 0.toFloat(), 0.toFloat(), null)
+            canvas.drawBitmap(bottomCard, 0.toFloat(), shotBmp.height.toFloat(), null)
+        }
 
 //        }
+        var saveResult = saveBmp2File(resultBmp, File(scrShotPath), Bitmap.CompressFormat.JPEG)
+        shotBmp?.takeIf { !it.isRecycled }?.run { this.recycle(); shotBmp = null }
+        resultBmp?.takeIf { !it.isRecycled }?.run { this.recycle(); resultBmp = null }
 
-        return saveBmp2File(resultBmp,File(scrShotPath),Bitmap.CompressFormat.JPEG)
+        return saveResult
     }
 
 
@@ -108,7 +113,9 @@ class FeedbackCardMaker(val context: Context) {
 
         //获取资源图片
         val inputStream = context.resources.openRawResource(resId)
-        return BitmapFactory.decodeStream(inputStream, null, opt)
+        var resBitmap = BitmapFactory.decodeStream(inputStream, null, opt)
+        inputStream.close()
+        return resBitmap
     }
 
 
@@ -128,7 +135,7 @@ class FeedbackCardMaker(val context: Context) {
      * 保存图片到文件
      */
     fun saveBmp2File(src: Bitmap, file: File, format: Bitmap.CompressFormat/*, recycle: Boolean*/): Boolean {
-        if(src == null || src.width == 0 || src.height == 0){
+        if (src == null || src.width == 0 || src.height == 0) {
             return false
         }
 
@@ -142,10 +149,9 @@ class FeedbackCardMaker(val context: Context) {
         } catch (e: IOException) {
             e.printStackTrace()
             return false
-        }finally {
+        } finally {
             os?.close()
         }
-
         return ret
     }
 
