@@ -76,7 +76,7 @@ class FeedbackCardMaker(val context: Context) {
 //            canvas.drawBitmap(newSizeBmp2, 0.toFloat(), shotBmp.height.toFloat(), null)
 //        } else {
         //以防万一，有时候会为空
-        shotBmp.takeIf { it == null }?.run { return false }
+        if (shotBmp == null) return false
         //如果截图宽 小于 底卡宽，那就缩小底卡
         if (shotBmp.width < bottomCard.width) {
             var newbottomCard = resizeBitmap(bottomCard, shotBmp.width, bottomCard.height * shotBmp.width / bottomCard.width)
