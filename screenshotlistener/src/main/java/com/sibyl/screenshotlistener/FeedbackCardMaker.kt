@@ -54,7 +54,7 @@ class FeedbackCardMaker(val context: Context) {
      */
     fun mergeScrShot2BottomCard(scrShotPath: String, bottomCard: Bitmap): Boolean {
         var resultBmp: Bitmap?
-        var shotBmp = BitmapFactory.decodeFile(scrShotPath, BitmapFactory.Options().apply {
+        var shotBmp: Bitmap? = BitmapFactory.decodeFile(scrShotPath, BitmapFactory.Options().apply {
             val opt = BitmapFactory.Options().apply {
                 inJustDecodeBounds = true
             }
