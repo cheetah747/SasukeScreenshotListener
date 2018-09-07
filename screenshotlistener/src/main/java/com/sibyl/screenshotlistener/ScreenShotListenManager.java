@@ -17,6 +17,7 @@ import android.view.WindowManager;
 
 import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 
 /**
@@ -289,7 +290,9 @@ public class ScreenShotListenManager {
          * 判断依据一: 时间判断
          */
         // 如果加入数据库的时间在开始监听之前, 或者与当前时间相差大于10秒, 则认为当前没有截屏
-        if (dateTaken < mStartListenTime || (System.currentTimeMillis() - dateTaken) > 10 * 1000) {
+        Calendar c=Calendar.getInstance();
+        c.setTimeInMillis(System.currentTimeMillis() - dateTaken);
+        if (dateTaken < mStartListenTime || c.get(Calendar.SECOND) > 10) {
             return false;
         }
 
@@ -354,6 +357,7 @@ public class ScreenShotListenManager {
             Display defaultDisplay = windowManager.getDefaultDisplay();
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
                 defaultDisplay.getRealSize(screenSize);
+                screenSize.y += 200;//全面屏可能会漏测虚拟键和statusbar高度，给个200高度的缓冲，免得后面通不过验证。
             } else {
                 try {
                     Method mGetRawW = Display.class.getMethod("getRawWidth");
