@@ -10,17 +10,15 @@ import java.io.*
  */
 class FeedbackCardMaker(val context: Context) {
 
-    /**
-     * 用于自定义card背景图片资源ID
-     */
-    constructor(context: Context,cardResId: Int): this(context) {
-        this.defaultCardResId = cardResId
-    }
 
     val TEXT_PAINT_SIZE = 45.0f
 //    val bottomCard by lazy {
 //        BitmapFactory.decodeResource(context.resources, R.mipmap.feedback_card)
 //    }
+
+    /**
+     * 用于自定义card背景图片资源ID
+     */
     var defaultCardResId = R.drawable.feedback_card
 
     /**
