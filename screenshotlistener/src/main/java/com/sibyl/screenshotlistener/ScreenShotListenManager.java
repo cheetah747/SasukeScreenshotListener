@@ -157,12 +157,12 @@ public class ScreenShotListenManager {
         // 注册内容观察者
         mContext.getContentResolver().registerContentObserver(
                 MediaStore.Images.Media.INTERNAL_CONTENT_URI,
-                false,
+                true,
                 mInternalObserver
         );
         mContext.getContentResolver().registerContentObserver(
                 MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
-                false,
+                true,
                 mExternalObserver
         );
     }
